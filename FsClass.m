@@ -45,13 +45,13 @@ classdef FsClass
             if isunix
                 dirWork.abaqus = ['../../workfolder'];
             elseif ispc
-                dirWork.abaqus = ['..\..\Abaqus_in_H\workfolder'];
+                dirWork.abaqus = ['..\..\workfolder'];
             end
 
             if isunix
                 dirWork.postProc = ['../../workfolder/postProc/' folderPostproc];
             elseif ispc
-                dirWork.postProc = ['..\..\Abaqus_in_H\workfolder\postProc\' folderPostproc];
+                dirWork.postProc = ['..\..\workfolder\postProc\' folderPostproc];
             end
 
         end
@@ -306,9 +306,13 @@ classdef FsClass
             %Count number of files
             nFiles = length(abaqusFileInfo(not([abaqusFileInfo.isdir])));
 
-            assert(nFiles == 1, 'There is more than one file for UR3')
+            assert(nFiles == 4, 'There is more than four file for UR3')
 
-            [dataUR3] = FsClass.importUR3dataForXpos(abaqusFileInfo(1).name, dirWork, IterStr);
+            dataUR3 = [];
+
+            for iFile=1:(nFiles)
+                [dataUR3] = FsClass.importUR3dataForXpos(abaqusFileInfo(iFile).name, dirWork, IterStr, dataUR3);
+            end
 
             %Return to original folder
             cd(dirWork.main)
@@ -328,7 +332,7 @@ classdef FsClass
                 fullfilename = [dirWork.postProc '\' IterStr '\' filename];
             end
 
-            %Obtain algle of attack for test
+            %Obtain position
             filename1 = strrep(filename, 'XYData_u2_','');
             filename2 = strrep(filename1, '.rpt','');
             xPos = str2num(filename2);
@@ -362,7 +366,7 @@ classdef FsClass
 
         end
 
-        function [dataUR3] = importUR3dataForXpos(filename, dirWork, IterStr)
+        function [dataUR3] = importUR3dataForXpos(filename, dirWork, IterStr, previousTable)
 
             %% Initialize variables.
             delimiter = ' ';
@@ -375,6 +379,11 @@ classdef FsClass
             elseif ispc
                 fullfilename = [dirWork.postProc '\' IterStr '\' filename];
             end
+
+            %Obtain location
+            filename1 = strrep(filename, 'XYData_ur3_','');
+            filename2 = strrep(filename1, '.rpt','');
+            loc = filename2;
 
             %% Format for each line of text:
             %   column2: double (%f)
@@ -403,7 +412,13 @@ classdef FsClass
             fclose(fileID);
 
             %% Allocate imported array to column variable names
-            dataUR3 = table(dataArray{1:end-1}, 'VariableNames', {'zAdim','ur3'});
+            if isempty(previousTable)
+                dataUR3 = table(dataArray{1:end-1}, 'VariableNames', {'zAdim',['ur3_' loc]});
+            else
+                data_temp = table(dataArray{1:end-1}, 'VariableNames', {'zAdim','ur3'});
+                previousTable.(['ur3_' loc]) = data_temp.ur3;
+                dataUR3 = previousTable;
+            end
 
         end
 

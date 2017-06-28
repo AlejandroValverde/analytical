@@ -178,13 +178,25 @@ if plotSettings.plotTwistAlongZ
 
 	end
 
-	y3 = plot(ax_distributed, dataUR3.zAdim, dataUR3.ur3 .* (180/pi),'.k');
-	y4 = plot(ax_concentrated, dataUR3.zAdim, dataUR3.ur3 .* (180/pi),'.k');
+	meanTwist = (dataUR3.ur3_up + dataUR3.ur3_dn + dataUR3.ur3_ri + dataUR3.ur3_lf) ./4;
+
+	y3 = plot(ax_distributed, dataUR3.zAdim, dataUR3.ur3_up .* (180/pi),'^k');
+	y7 = plot(ax_distributed, dataUR3.zAdim, dataUR3.ur3_dn .* (180/pi),'vk');
+	y9 = plot(ax_distributed, dataUR3.zAdim, dataUR3.ur3_ri .* (180/pi),'sk');
+	y11 = plot(ax_distributed, dataUR3.zAdim, dataUR3.ur3_lf .* (180/pi),'dk');
+	y13 = plot(ax_distributed, dataUR3.zAdim, meanTwist .* (180/pi),'ok');
+
+	y4 = plot(ax_concentrated, dataUR3.zAdim, dataUR3.ur3_up .* (180/pi),'^k');
+	y8 = plot(ax_concentrated, dataUR3.zAdim, dataUR3.ur3_dn .* (180/pi),'vk');
+	y10 = plot(ax_concentrated, dataUR3.zAdim, dataUR3.ur3_ri .* (180/pi),'sk');
+	y12 = plot(ax_concentrated, dataUR3.zAdim, dataUR3.ur3_lf .* (180/pi),'dk');
+	y14 = plot(ax_concentrated, dataUR3.zAdim, meanTwist .* (180/pi),'ok');
+
 	y5 = plot(ax_distributed, dataUR3.zAdim, twist_fun(dataUR3.zAdim .* geom.L) .* (180/pi), 'b');
 	y6 = plot(ax_concentrated, dataUR3.zAdim, twist_concentratedLoad .* (180/pi) .* dataUR3.zAdim, 'b');
 
-	legend(ax_distributed, [y1 y3 y5], 'FEM - U2','FEM - UR3', 'Analytical', 'location','Best')
-	legend(ax_concentrated, [y2 y4 y6], 'FEM - U2','FEM - UR3', 'Analytical', 'location','Best')
+	legend(ax_distributed, [y1 y3 y7 y9 y11 y13 y5], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{down}', 'FEM-UR3_{right}', 'FEM-UR3_{left}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
+	legend(ax_concentrated, [y2 y4 y8 y10 y12 y14 y6], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{down}', 'FEM-UR3_{right}', 'FEM-UR3_{left}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
 
 end
 
