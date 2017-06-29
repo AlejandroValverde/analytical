@@ -3,30 +3,6 @@ clear all
 % close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Parameteric study
-
-parameters = {'L', 'B', 'H','t1', 't2Overt1', 'E1', 'E1OverE2', 'G1', 'G2OverG1', 'Q_z_total', 'posForceAdim'};
-
-nominalDict = containers.Map({200, 50, 30, 2, 1, 69000, 1, 26000, 1, 4000, 0.1}, parameters);
-
-ranges = cell(1, 11);
-
-ranges{1} = []; %L
-ranges{2} = []; %B
-ranges{3} = []; %H
-ranges{4} = []; %t1
-ranges{5} = []; %t2Overt1
-ranges{6} = []; %E1
-ranges{7} = []; %E1OverE2
-ranges{8} = []; %G1
-ranges{9} = []; %G2OverG1
-ranges{10} = []; %Q_z_total
-ranges{11} = []; %posForceAdim
-
-rangeDict = containers.Map(parameters, ranges);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %% Parameters
 geom.L = 200; %mm
 geom.B = 50; %mm
@@ -40,7 +16,7 @@ geom.nInnerRibs = 1; %For the abaqus model
 
 mat.E1 = 69000; %N/mm2, aluminium
 mat.G1 = 26000; %N/mm2, aluminium: 26 GPa
-mat.E2 = mat.E1/20; %N/mm2, steel: 200 GPa
+mat.E2 = mat.E1/1; %N/mm2, steel: 200 GPa
 mat.G2 = mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 
 % Real materials
@@ -55,8 +31,8 @@ loadCase.posForceAdim = 0.5;
 
 %% Plotting settings
 plotSettings.plotAnalytical = false;
-plotSettings.plotTwistAlongZ = true;
-plotSettings.plotParametricStudy = false;
+plotSettings.plotTwistAlongZ = false;
+plotSettings.plotParametricStudy = true;
 plotSettings.shearCenterPos = false;
 options.executeAbaqus = true;
 
@@ -209,12 +185,13 @@ if plotSettings.plotParametricStudy
 %Study for range of E2
 % Parameter for abaqus: E1overE2
 % Values
-% study.E1overE2 = linspace(1, 100, 10);
+study.E1overE2 = linspace(1, 20, 10);
 % study.E1overE2 = logspace(0,5,5);
-study.E1overE2 = [1, 20, 50];
+% study.E1overE2 = [1, 20, 10];
 
 twistTipAbaqus_from_U2 = zeros(1, length(study.E1overE2));
 twistTipAbaqus_from_UR3 = zeros(1, length(study.E1overE2));
+twistTipAbaqus_from_UR3_mean = zeros(1, length(study.E1overE2));
 twistTipAnalytical = zeros(1, length(study.E1overE2));
 operCell = cell(1, length(study.E1overE2));
 
@@ -247,10 +224,17 @@ for i_study = 1:length(study.E1overE2)
 	fprintf(['Loading results from Abaqus...' '\n']) %Show progress
 	[xPos, dataU2, dataUR3] = FsClass.loadAbaqus(dirWork, num2str(i_study));
 
-	% Find index for last position
+	%%%Twist from U2
+	% Find index for last position 
 	[~, index] = find(xPos == max(xPos));
 	twistTipAbaqus_from_U2(i_study) = ((dataU2{index}(end) - dataU2{index}(1)) / geom.B) * (180/pi);
-	twistTipAbaqus_from_UR3(i_study) = dataUR3.ur3(end) .* (180/pi);
+	
+	%%%Twist from UR3
+	twistTipAbaqus_from_UR3(i_study) = dataUR3.ur3_up(end) .* (180/pi); %Upper flange
+	% From mean UR3
+	meanTwist = (dataUR3.ur3_up + dataUR3.ur3_dn + dataUR3.ur3_ri + dataUR3.ur3_lf) ./4;
+	[meanTwistTip] = FsClass.finalGuessOfOverallTwistAtTip(dataUR3.zAdim, meanTwist .* (180/pi));
+	twistTipAbaqus_from_UR3_mean(i_study) = meanTwistTip;
 	
 	fprintf(['Executing analytical model...' '\n']) %Show progress
 
@@ -273,8 +257,9 @@ hold on
 y1 = plot(ax, study.E1overE2, twistTipAbaqus_from_U2, '.k', 'MarkerSize', plotSettings.MarkerSize);
 y2 = plot(ax, study.E1overE2, twistTipAbaqus_from_UR3, '.r', 'MarkerSize', plotSettings.MarkerSize);
 y3 = plot(ax, study.E1overE2, twistTipAnalytical, 'b', 'LineWidth', plotSettings.LineWidth);
+y4 = plot(ax, study.E1overE2, twistTipAbaqus_from_UR3_mean, 'ob', 'LineWidth', plotSettings.LineWidth);
 
-legend(ax, [y1 y2 y3], 'FEM - U2','FEM - UR3', 'Analytical', 'location','Best')
+legend(ax, [y1 y2 y4 y3], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
 
 FsClass.SetAxisProp(ax, plotSettings);
 

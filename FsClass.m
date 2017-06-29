@@ -66,6 +66,29 @@ classdef FsClass
 
         end
 
+        function [twist] = finalGuessOfOverallTwistAtTip(xFit, yFit)
+
+            %% Fit: 'untitled fit 1'.
+            [xData, yData] = prepareCurveData( xFit, yFit );
+
+            % Set up fittype and options.
+            ft = fittype( 'poly1' );
+
+            % Fit model to data.
+            %Type of polyominal fitting algorithm, 'poly1': f(x) = p1*x + p2
+            [fitresult, ~] = fit( xData, yData, ft );
+
+            confi = confint(fitresult);
+
+            %Build output variables
+            p1 = [fitresult.p1, confi(1, 1), confi(2, 1)];
+            p2 = [fitresult.p2, confi(1, 2), confi(2, 2)];
+
+            %Twist at tip, x=1
+            twist = p1(1) + p2(2);
+
+        end
+
         function [oper] = shearFlowCalculations(geom, mat, loadCase, plotSettings)
 
             t1 = geom.t1;

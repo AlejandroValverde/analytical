@@ -1,5 +1,33 @@
-% study.E1overE2 = [1, 20, 50];
-study.E1overE2 = linspace(1, 100, 10);
+clear all
+%% Parameters
+geom.L = 200; %mm
+geom.B = 50; %mm
+geom.H = 30; %mm
+geom.t1 = 2;
+geom.t2 = 2;
+
+geom.nPointsPerSection = 100; %For analytical model
+
+geom.nInnerRibs = 1; %For the abaqus model
+
+mat.E1 = 69000; %N/mm2, aluminium
+mat.G1 = 26000; %N/mm2, aluminium: 26 GPa
+mat.E2 = mat.E1/20; %N/mm2, steel: 200 GPa
+mat.G2 = mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
+
+% Real materials
+% mat.E1 = 200000.0; %69000; %N/mm2, aluminium
+% mat.G1 = 79300; %N/mm2, aluminium: 26 GPa
+% mat.E2 = 69000.0; % mat.E1/10; %N/mm2, steel: 200 GPa
+% mat.G2 = 26000; %mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
+
+loadCase.Q_z_total = 4000; %N
+
+loadCase.posForceAdim = 0.5;
+
+%% 
+study.E1overE2 = [1, 20, 50];
+% study.E1overE2 = linspace(1, 100, 10);
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Comparison of results')
