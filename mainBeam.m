@@ -242,7 +242,9 @@ twist_fun = @(x) specific_twist_fun(x) .* x;
 
 % twist_concentratedLoad = (((loadCase.q_z .* geom.L) .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* geom.L;
 
-twist_concentratedLoad = ((-150000) ./ oper.torStiff) .* geom.L;
+% twist_concentratedLoad = ((-150000) ./ oper.torStiff) .* geom.L;
+
+twist_concentratedLoad = ((loadCase.Q_z_total .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* geom.L;
 
 xAdimSec = linspace(0, 1, 100);
 

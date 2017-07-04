@@ -12,11 +12,11 @@ geom.t2 = 1;
 
 geom.nPointsPerSection = 100; %For analytical model
 
-geom.nInnerRibs = 3; %For the abaqus model
+geom.nInnerRibs = 0; %For the abaqus model
 
 mat.E1 = 69000; %N/mm2, aluminium
 mat.G1 = 26000; %N/mm2, aluminium: 26 GPa
-mat.E2 = mat.E1/15; %N/mm2, steel: 200 GPa
+mat.E2 = mat.E1/50; %N/mm2, steel: 200 GPa
 mat.G2 = mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 
 % Real materials
@@ -25,7 +25,7 @@ mat.G2 = mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 % mat.E2 = 69000.0; % mat.E1/10; %N/mm2, steel: 200 GPa
 % mat.G2 = 26000; %mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 
-loadCase.Q_z_total = 4000; %N
+loadCase.Q_z_total = 2000; %N
 
 loadCase.posForceAdim = 0.5;
 
@@ -34,7 +34,7 @@ plotSettings.plotAnalytical = false;
 plotSettings.plotTwistAlongZ = true;
 plotSettings.plotParametricStudy = false;
 plotSettings.shearCenterPos = false;
-options.executeAbaqus = false;
+options.executeAbaqus = true;
 
 plotSettings.savePlot = false;
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
