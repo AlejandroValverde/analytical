@@ -16,7 +16,7 @@ geom.nPointsPerSection = 100; %For analytical model
 geom.nInnerRibs = 0; %For the abaqus model
 mat.E1 = 69000; %N/mm2, aluminium
 mat.G1 = 26000; %N/mm2, aluminium: 26 GPa
-mat.E2 = mat.E1/50; %N/mm2, steel: 200 GPa
+mat.E2 = mat.E1/10; %N/mm2, steel: 200 GPa
 mat.G2 = mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 
 % Real materials
@@ -125,13 +125,15 @@ if plotSettings.plotTwistAlongZ
 	[dirWork] = FsClass.organizeFolders(num2str(Iter));
 	[xPos, dataU2, dataUR3] = FsClass.loadAbaqus(dirWork, num2str(Iter));
 
-	figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
-	set(gcf, 'Name', 'Twist due to distributed load')
-	ax_distributed = gca;
-	xlabel('z/L')
-	ylabel('\theta_{tip} [deg]')
-	hold on
-	grid minor
+	if plotSettings.plotDistributedLoad
+		figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+		set(gcf, 'Name', 'Twist due to distributed load')
+		ax_distributed = gca;
+		xlabel('z/L')
+		ylabel('\theta_{tip} [deg]')
+		hold on
+		grid minor
+	end
 
 	figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 	set(gcf, 'Name', ['Twist due to moment applied on the rib for E1/E2:' num2str(mat.E1/mat.E2) ' and ' num2str(geom.nInnerRibs) ' inner ribs'])
@@ -178,11 +180,11 @@ if plotSettings.plotTwistAlongZ
 	if plotSettings.plotDistributedLoad
 		y5 = plot(ax_distributed, dataUR3.zAdim, twist_fun(dataUR3.zAdim .* geom.L) .* (180/pi), 'b');
 	end
-	y6 = plot(ax_concentrated, dataUR3.zAdim, twist_concentratedLoad .* (180/pi), 'b');
+	y6 = plot(ax_concentrated, xAdimSec, twist_concentratedLoad .* (180/pi), 'b');
 
-	legend(ax_distributed, [y1 y3 y7 y9 y11 y13 y5], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{down}', 'FEM-UR3_{right}', 'FEM-UR3_{left}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
+	legend(ax_concentrated, [y2 y4 y8 y10 y12 y14 y6], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{down}', 'FEM-UR3_{right}', 'FEM-UR3_{left}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
 	if plotSettings.plotDistributedLoad
-		legend(ax_concentrated, [y2 y4 y8 y10 y12 y14 y6], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{down}', 'FEM-UR3_{right}', 'FEM-UR3_{left}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
+		legend(ax_distributed, [y1 y3 y7 y9 y11 y13 y5], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{down}', 'FEM-UR3_{right}', 'FEM-UR3_{left}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
 	end
 
 end

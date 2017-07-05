@@ -250,13 +250,9 @@ specific_twist_fun = @(x) (M_t_distributed(x) ./ oper.torStiff);
 
 twist_fun = @(x) specific_twist_fun(x) .* x;
 
-<<<<<<< HEAD
 % twist_concentratedLoad = (((loadCase.q_z .* geom.L) .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* geom.L;
 
 % twist_concentratedLoad = ((-150000) ./ oper.torStiff) .* geom.L;
-=======
-twist_concentratedLoad = (((loadCase.q_z .* geom.L) .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* geom.L;
->>>>>>> parent of ded8c33... Added code to make parameters plots. Also added constant moment.
 
 twist_concentratedLoad = ((loadCase.Q_z_total .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* xAdimSec .* geom.L;
 
