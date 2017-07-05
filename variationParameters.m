@@ -32,7 +32,35 @@ plotSettings.TitleFontSizeMultiplier = 1.5; %Scale factor for title font size, s
 %% Organize folder
 [dirWork] = FsClass.organizeFolders();
 
+%%%%%%%%%%%%%%%%%%%%%%%
+%% Variation of E1/E2
+study.E1overE2 = logspace(0,5,10)
+study.twistTip = zeros(1, length(study.E1overE2));
+
+%Update variable
+for i_study= 1:length(study.E1overE2)
+mat.E2 = mat.E1 / study.E1overE2(i_study);
+mat.G2 = mat.E2 / (2*(0.3269 + 1) ); %N/mm2,
+mainBeam %Execute analytical model script
+study.twistTip(i_study) = twist_concentratedLoad(end) .* (180/pi);
+end
+
+figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+set(gcf, 'Name', 'Torsional stiffness variation for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+ax = gca;
+ylabel('G I_t [N mm^2]')
+xlabel(['B/H'])
+hold on
+
+plot(ax, study.E1overE2, study.twistTip, 'LineWidth', plotSettings.LineWidth);
+set(ax, 'YScale', 'log')
+set(ax, 'XScale', 'log')
+
+FsClass.SetAxisProp(ax, plotSettings);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Variation of B/H - Torsional stiffness
+clearvars study
 study.BoverH = linspace(0.5, 4, 10);
 study.E1overE2 = [1, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3, 10^3.5];
 mat_init = mat;
@@ -73,6 +101,8 @@ end
 legend(ax, y_plots, legendStr, 'location','Best')
 
 FsClass.SetAxisProp(ax, plotSettings);
+
+%%%%%%%%%%%%%%%%%%%%%
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Shear center for closed section location for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')

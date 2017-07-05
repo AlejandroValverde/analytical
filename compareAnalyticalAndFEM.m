@@ -215,7 +215,7 @@ for i_study = 1:length(study.E1overE2)
     mat.G2 = mat.E2 / (2*(0.3269 + 1) ); %N/mm2,
 	mainBeam %Execute analytical model script
 	operCell{i_study} = oper;
-	twistTipAnalytical(i_study) = twist_concentratedLoad .* (180/pi); %.* dataUR3.zAdim(end)
+	twistTipAnalytical(i_study) = twist_concentratedLoad(end) .* (180/pi); %.* dataUR3.zAdim(end)
 	
 	%Update input Abaqus input file
 	fprintf(['Writing Abaqus input to file...' '\n']) %Show progress
