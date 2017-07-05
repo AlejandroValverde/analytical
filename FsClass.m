@@ -53,15 +53,15 @@ classdef FsClass
             dirWork.main = pwd;
 
             if isunix
-                dirWork.abaqus = ['../../workfolder'];
+                dirWork.abaqus = ['./Abaqus_in_H/workfolder'];
             elseif ispc
-                dirWork.abaqus = ['..\..\workfolder'];
+                dirWork.abaqus = ['.\Abaqus_in_H\workfolder'];
             end
 
             if isunix
-                dirWork.postProc = ['../../workfolder/postProc/' folderPostproc];
+                dirWork.postProc = ['./Abaqus_in_H/workfolder/postProc/' folderPostproc];
             elseif ispc
-                dirWork.postProc = ['..\..\workfolder\postProc\' folderPostproc];
+                dirWork.postProc = ['.\Abaqus_in_H\workfolder\postProc\' folderPostproc];
             end
 
         end
