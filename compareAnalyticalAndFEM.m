@@ -31,6 +31,7 @@ loadCase.posForceAdim = 0.5;
 
 %% Plotting settings
 plotSettings.plotAnalytical = false;
+plotSettings.plotDistributedLoad = false;
 plotSettings.plotTwistAlongZ = true;
 plotSettings.plotParametricStudy = false;
 plotSettings.shearCenterPos = false;

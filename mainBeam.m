@@ -224,13 +224,23 @@ oper.torStiff = (4*A^2) / term_A;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if plotSettings.plotAnalytical
+if plotSettings.plotAnalytical && plotSettings.plotDistributedLoad
 	figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 	set(gcf, 'Name', 'Twist due to distributed load')
-	ax = gca;
+	ax_distributed = gca;
 	xlabel('z/L')
 	ylabel('\phi [deg]')
 end
+
+if plotSettings.plotAnalytical && ~ plotSettings.plotDistributedLoad
+    figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+    set(gcf, 'Name', 'Twist due to distributed load')
+    ax_concentrated = gca;
+    xlabel('z/L')
+    ylabel('\phi [deg]')
+end
+
+xAdimSec = linspace(0, 1, 100);
 
 F_x_distributed = @(x) (loadCase.q_z .* geom.L) + (loadCase.q_z .* x);
 
@@ -244,10 +254,14 @@ twist_fun = @(x) specific_twist_fun(x) .* x;
 
 % twist_concentratedLoad = ((-150000) ./ oper.torStiff) .* geom.L;
 
-twist_concentratedLoad = ((loadCase.Q_z_total .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* geom.L;
+twist_concentratedLoad = ((loadCase.Q_z_total .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* xAdimSec .* geom.L;
 
-xAdimSec = linspace(0, 1, 100);
-
-if plotSettings.plotAnalytical
-	plot(xAdimSec .* geom.L, twist_fun(xAdimSec .* geom.L) .* (180/pi))
+if plotSettings.plotAnalytical && plotSettings.plotDistributedLoad
+    plot(ax_distributed, xAdimSec .* geom.L, twist_fun(xAdimSec .* geom.L) .* (180/pi))
+    FsClass.SetAxisProp(ax_distributed, plotSettings);
 end
+
+if plotSettings.plotAnalytical && ~ plotSettings.plotDistributedLoad
+    plot(ax_concentrated, xAdimSec .* geom.L, twist_concentratedLoad .* (180/pi))
+    FsClass.SetAxisProp(ax_concentrated, plotSettings);
+end 
