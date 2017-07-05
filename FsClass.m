@@ -39,6 +39,16 @@ classdef FsClass
                 folderPostproc = '.';
             end
 
+            if exist('figures', 'dir') == 0
+                mkdir('figures'); 
+            end
+
+            if isunix
+                dirWork.figures = ['./figures/'];
+            elseif ispc
+                dirWork.figures = ['.\figures\'];
+            end
+
 
             dirWork.main = pwd;
 

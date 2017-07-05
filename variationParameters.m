@@ -15,12 +15,13 @@ mat.G1 = 26000; %N/mm2, aluminium: 26 GPa
 mat.E2 = mat.E1/1; %N/mm2, steel: 200 GPa
 mat.G2 = mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 
-loadCase.Q_z_total = 4000; %N
+loadCase.Q_z_total = 2000; %N
 
 loadCase.posForceAdim = 0.5;
 
 plotSettings.plotAnalytical = false;
-plotSettings.savePlot = false;
+plotSettings.savePlot = true;
+
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
 plotSettings.LineWidth = 1.5; %Line width, specified as a positive value in points.
 plotSettings.axGridAlpha = 0.2; %Grid-line transparency, specified as a value in the range [0,1].
@@ -32,36 +33,55 @@ plotSettings.TitleFontSizeMultiplier = 1.5; %Scale factor for title font size, s
 %% Organize folder
 [dirWork] = FsClass.organizeFolders();
 
+%Save initial configuration
+mat_init = mat;
+geom_init = geom;
+
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Variation of E1/E2
-study.E1overE2 = logspace(0,5,10)
-study.twistTip = zeros(1, length(study.E1overE2));
+% study.E1overE2 = logspace(0,5,100);
+study.n_E1overE2 = 300;
+study.step_E1overE2 = 1.025;
+study.E1overE2 = 1; %Initial value
+study.twistTip = zeros(1, study.n_E1overE2);
+study.storage_E1overE2 = zeros(1, study.n_E1overE2);
+operCell = cell(1, study.n_E1overE2);
 
 %Update variable
-for i_study= 1:length(study.E1overE2)
-mat.E2 = mat.E1 / study.E1overE2(i_study);
-mat.G2 = mat.E2 / (2*(0.3269 + 1) ); %N/mm2,
-mainBeam %Execute analytical model script
-study.twistTip(i_study) = twist_concentratedLoad(end) .* (180/pi);
+mat = mat_init;
+geom = geom_init;
+for i_study= 1:study.n_E1overE2
+	study.storage_E1overE2(i_study) = study.E1overE2;
+	mat.E2 = mat.E1 / study.E1overE2;
+	mat.G2 = mat.E2 / (2*(0.3269 + 1) ); %N/mm2,
+	mainBeam %Execute analytical model script
+	study.twistTip(i_study) = twist_concentratedLoad(end) .* (180/pi);
+	operCell{i_study} = oper;
+	study.E1overE2 = study.E1overE2 * study.step_E1overE2;
 end
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
-set(gcf, 'Name', 'Torsional stiffness variation for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+set(gcf, 'Name', 'Twist at tip as a function of stiffness ratio E_1/E_2)')
 ax = gca;
-ylabel('G I_t [N mm^2]')
-xlabel(['B/H'])
-hold on
-
-plot(ax, study.E1overE2, study.twistTip, 'LineWidth', plotSettings.LineWidth);
-set(ax, 'YScale', 'log')
-set(ax, 'XScale', 'log')
+loglog(ax, study.storage_E1overE2, study.twistTip, 'LineWidth', plotSettings.LineWidth);
+% set(ax, 'YScale', 'log')
+% set(ax, 'XScale', 'log')
+% set(ax, 'YLabel', '\phi_{tip} [deg]')
+% set(ax, 'XLabel', 'E_1/E_2')
+ylabel('\phi_{tip} [deg]')
+xlabel(['E_1/E_2'])
 
 FsClass.SetAxisProp(ax, plotSettings);
+
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'twist_E1overE2.png'])
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Variation of B/H - Torsional stiffness
 clearvars study
-study.BoverH = linspace(0.5, 4, 10);
+study.BoverH = linspace(0.5, 4, 100);
 study.E1overE2 = [1, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3, 10^3.5];
 mat_init = mat;
 geom_init = geom;
@@ -71,15 +91,18 @@ study.result_ySCoverB_BoverH = zeros(length(study.E1overE2), length(study.BoverH
 study.Phi_y = zeros(length(study.E1overE2), length(study.BoverH));
 
 %Update variable
+mat = mat_init;
+geom = geom_init;
 for i_study= 1:length(study.E1overE2)
 for j_study= 1:length(study.BoverH)
 mat.E2 = mat.E1 / study.E1overE2(i_study);
 mat.G2 = mat.E2 / (2*(0.3269 + 1) ); %N/mm2,
-geom.B = geom.H * study.BoverH(j_study);
+geom.B = (study.BoverH(j_study) * 120) / (study.BoverH(j_study) + 1);
+geom.H = 120 - geom.B;
 mainBeam %Execute analytical model script
 study.result_GIt_BoverH(i_study, j_study) = oper.torStiff;
-study.result_ySCoverB_BoverH(i_study, j_study) = oper.y_sc_closed / geom.B;
-study.Phi_y(i_study, j_study) = oper.Phi_y * mat.E2;
+study.result_ySCoverB_BoverH(i_study, j_study) = -oper.y_sc_closed / geom.B;
+study.Phi_y(i_study, j_study) = oper.Phi_y * mat.E1;
 end
 end
 
@@ -102,7 +125,13 @@ legend(ax, y_plots, legendStr, 'location','Best')
 
 FsClass.SetAxisProp(ax, plotSettings);
 
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'GIt_E1overE2_BoverH.png'])
+end
+
 %%%%%%%%%%%%%%%%%%%%%
+%% Shear center
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Shear center for closed section location for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
@@ -123,10 +152,15 @@ legend(ax, y_plots, legendStr, 'location','Best')
 
 FsClass.SetAxisProp(ax, plotSettings);
 
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'SC_E1overE2_BoverH.png'])
+end
+
 %%%%%%%%%%%%%%%%%%%%%
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
-set(gcf, 'Name', 'Shear center for closed section location for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+set(gcf, 'Name', 'Flexural stiffness for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
 ax = gca;
 ylabel('\phi_y [N mm^2]')
 xlabel(['B/H'])
@@ -143,3 +177,8 @@ end
 legend(ax, y_plots, legendStr, 'location','Best')
 
 FsClass.SetAxisProp(ax, plotSettings);
+
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'EIy_E1overE2_BoverH.png'])
+end
