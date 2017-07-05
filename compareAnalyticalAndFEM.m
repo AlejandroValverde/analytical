@@ -5,15 +5,15 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 geom.L = 200; %mm
-geom.B = 80; %mm
-geom.H = 40; %mm
-geom.t1 = 1;
-geom.t2 = 1;
+geom.B = 50; %mm
+geom.H = 30; %mm
+geom.t1 = 2;
+geom.t2 = 2;
 
 geom.nPointsPerSection = 100; %For analytical model
 
-geom.nInnerRibs = 0; %For the abaqus model
 
+geom.nInnerRibs = 0; %For the abaqus model
 mat.E1 = 69000; %N/mm2, aluminium
 mat.G1 = 26000; %N/mm2, aluminium: 26 GPa
 mat.E2 = mat.E1/10; %N/mm2, steel: 200 GPa
@@ -35,7 +35,7 @@ plotSettings.plotDistributedLoad = false;
 plotSettings.plotTwistAlongZ = true;
 plotSettings.plotParametricStudy = false;
 plotSettings.shearCenterPos = false;
-options.executeAbaqus = false;
+options.executeAbaqus = true;
 
 plotSettings.savePlot = false;
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
@@ -198,7 +198,7 @@ if plotSettings.plotParametricStudy
 %Study for range of E2
 % Parameter for abaqus: E1overE2
 % Values
-study.E1overE2 = linspace(1, 20, 5);
+study.E1overE2 = linspace(1, 20, 10);
 % study.E1overE2 = logspace(0,5,5);
 % study.E1overE2 = [1, 20, 10];
 
