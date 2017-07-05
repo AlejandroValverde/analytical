@@ -93,6 +93,8 @@ legend(ax, y_plots, legendStr, 'location','Best')
 
 FsClass.SetAxisProp(ax, plotSettings);
 
+%%%%%%%%%%%%%%%%%%%%%
+
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Shear center for closed section location for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
 ax = gca;
