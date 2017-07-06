@@ -13,7 +13,7 @@
 %Pre-calculations
 A = geom.H*geom.B;
 q_z = loadCase.Q_z_total/geom.L; %N/mm
-y_load = (geom.B/2) - (loadCase.posForceAdim*geom.B); %mm
+y_load = loadCase.posForceAdim*geom.B; %mm
 
 loadCase.q_z = q_z;
 loadCase.y_load = y_load;
@@ -138,7 +138,7 @@ term_B = (  (E1/G1)*( (-H^3/24) - ((1/4)*H^2*B) - (0.5*H*B^2) )  )+(  ((E1*t1)/(
 q0 = (Q_z/Phi_y)*(term_B/term_A);
 
 %Shear center closed section
-y_sc_closed = - y_sc_open + ( (2*q0*A)/Q_z );
+y_sc_closed = y_sc_open - ( (2*q0*A)/Q_z ); %Signs change made here
 if plotSettings.plotAnalytical
     plot_y_sc_closed = plot(y_sc_closed,0,'+r');
 end
@@ -242,6 +242,13 @@ end
 
 xAdimSec = linspace(0, 1, 100);
 
+%Bending, solution of the Bernoulli-Euler equation
+
+w_b_fun = @(x) ((loadCase.Q_z_total .* (geom.L.^3))./ (6.*oper.Phi_y)) * ((-x.^3./geom.L.^3) + ((3.*x.^2)./geom.L.^2));
+
+
+%Moment
+
 F_x_distributed = @(x) (loadCase.q_z .* geom.L) + (loadCase.q_z .* x);
 
 M_t_distributed = @(x) F_x_distributed(x) .* (y_load - oper.y_sc_closed);
@@ -255,6 +262,7 @@ twist_fun = @(x) specific_twist_fun(x) .* x;
 % twist_concentratedLoad = ((-150000) ./ oper.torStiff) .* geom.L;
 
 twist_concentratedLoad = ((loadCase.Q_z_total .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* xAdimSec .* geom.L;
+w_b = w_b_fun(xAdimSec .* geom.L);
 
 if plotSettings.plotAnalytical && plotSettings.plotDistributedLoad
     plot(ax_distributed, xAdimSec .* geom.L, twist_fun(xAdimSec .* geom.L) .* (180/pi))

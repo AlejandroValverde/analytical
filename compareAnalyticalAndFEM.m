@@ -13,7 +13,7 @@ geom.t2 = 1;
 geom.nPointsPerSection = 100; %For analytical model
 
 
-geom.nInnerRibs = 0; %For the abaqus model
+geom.nInnerRibs = 1; %For the abaqus model
 mat.E1 = 69000; %N/mm2, aluminium
 mat.G1 = 26000; %N/mm2, aluminium: 26 GPa
 mat.E2 = mat.E1/100; %N/mm2, steel: 200 GPa
@@ -25,13 +25,14 @@ mat.G2 = mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 % mat.E2 = 69000.0; % mat.E1/10; %N/mm2, steel: 200 GPa
 % mat.G2 = 26000; %mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 
-loadCase.Q_z_total = -2000; %N
+loadCase.Q_z_total = 2000; %N
 
-loadCase.posForceAdim = 0.5;
+loadCase.posForceAdim = 0.0;
 
 %% Plotting settings
 plotSettings.plotAnalytical = false;
 plotSettings.plotDistributedLoad = false;
+plotSettings.plotBending = true;
 plotSettings.plotTwistAlongZ = true;
 plotSettings.plotParametricStudy = false;
 plotSettings.shearCenterPos = false;
@@ -132,7 +133,17 @@ if plotSettings.plotTwistAlongZ
 		xlabel('z/L')
 		ylabel('\theta_{tip} [deg]')
 		hold on
-		grid minor
+		FsClass.SetAxisProp(ax_distributed, plotSettings);
+	end
+
+	if plotSettings.plotBending
+		figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+		set(gcf, 'Name', 'Beam bending')
+		ax_bending = gca;
+		xlabel('z/L')
+		ylabel('w_{b} [mm]')
+		hold on
+		FsClass.SetAxisProp(ax_bending, plotSettings);
 	end
 
 	figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
@@ -141,21 +152,28 @@ if plotSettings.plotTwistAlongZ
 	xlabel('z/L')
 	ylabel('\theta_{tip} [deg]')
 	hold on
-	grid minor
+	FsClass.SetAxisProp(ax_concentrated, plotSettings);
 
 	for point =1:length(xPos)
 
 	    twist = ((dataU2{point}(end) - dataU2{point}(1)) / geom.B) * (180/pi);
+	    bending = dataU2{point}(floor(length(dataU2{point})/2));%mean( dataU2{point} );
 
 	    if point == 1
 	        y2 = plot(ax_concentrated, xPos(point) / geom.L, twist,'.r');
 	        if plotSettings.plotDistributedLoad
 	        	y1 = plot(ax_distributed, xPos(point) / geom.L, twist,'.b');
 	        end
+	        if plotSettings.plotBending
+	        	y1_bend = plot(ax_bending, xPos(point) / geom.L, bending,'.r');
+	        end
 	    else
 	        plot(ax_concentrated, xPos(point) / geom.L, twist,'.r')
 	        if plotSettings.plotDistributedLoad
 	        	plot(ax_distributed, xPos(point) / geom.L, twist,'.b')
+	        end
+	        if plotSettings.plotBending
+	        	plot(ax_bending, xPos(point) / geom.L, bending,'.r');
 	        end
 	    end
 
@@ -185,6 +203,12 @@ if plotSettings.plotTwistAlongZ
 	legend(ax_concentrated, [y2 y4 y8 y10 y12 y14 y6], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{down}', 'FEM-UR3_{right}', 'FEM-UR3_{left}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
 	if plotSettings.plotDistributedLoad
 		legend(ax_distributed, [y1 y3 y7 y9 y11 y13 y5], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{down}', 'FEM-UR3_{right}', 'FEM-UR3_{left}', 'FEM-UR3_{mean}', 'Analytical', 'location','Best')
+	end
+
+	if plotSettings.plotBending
+		y2_bend = plot(ax_bending, xAdimSec, -w_b, 'b'); %Need to change sign because different axis
+
+		legend(ax_bending, [y1_bend y2_bend], 'FEM-U2', 'Analytical', 'location','Best')
 	end
 
 end
