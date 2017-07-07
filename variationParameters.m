@@ -102,7 +102,7 @@ geom.H = 120 - geom.B;
 mainBeam %Execute analytical model script
 study.result_GIt_BoverH(i_study, j_study) = oper.torStiff;
 study.result_ySCoverB_BoverH(i_study, j_study) = -oper.y_sc_closed / geom.B;
-study.Phi_y(i_study, j_study) = oper.Phi_y * mat.E1;
+study.Phi_y(i_study, j_study) = oper.Phi_y;
 end
 end
 
