@@ -22,7 +22,8 @@ loadCase.posForceAdim = 0.5;
 plotSettings.plotAnalytical = false;
 plotSettings.savePlot = true;
 
-plotSettings.lineStyle = {'k-', 'c-', 'r-', 'y-', 'k--', 'c--', 'r--', 'y--', 'k:', 'c:', 'r:', 'y:','k-.', 'c-.', 'r-.', 'y-.'};
+plotSettings.lineStyle = {'-', '--', ':', '-.'};
+plotSettings.lineColor = {'k', 'c', 'r', 'y'}
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
 plotSettings.LineWidth = 1.5; %Line width, specified as a positive value in points.
 plotSettings.axGridAlpha = 0.2; %Grid-line transparency, specified as a value in the range [0,1].
@@ -116,7 +117,9 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.BoverH, study.result_GIt_BoverH(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.BoverH, study.result_GIt_BoverH(i, :), 
+		'Color', plotSettings.lineColor(i), 'LineStyle',plotSettings.lineStyle(floor((i+4)/4)),
+		'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
@@ -143,7 +146,9 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.BoverH, study.result_ySC_BoverH(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.BoverH, study.result_ySC_BoverH(i, :), 
+		'Color', plotSettings.lineColor(i), 'LineStyle',plotSettings.lineStyle(floor((i+4)/4)),
+		'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
@@ -169,7 +174,9 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.BoverH, study.Phi_y(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.BoverH, study.Phi_y(i, :), 
+		'Color', plotSettings.lineColor(i), 'LineStyle',plotSettings.lineStyle(floor((i+4)/4)),
+		'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
@@ -220,7 +227,9 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.t2overt1, study.result_GIt_t2overt1(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.t2overt1, study.result_GIt_t2overt1(i, :), 
+		'Color', plotSettings.lineColor(i), 'LineStyle',plotSettings.lineStyle(floor((i+4)/4)),
+		'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
@@ -247,7 +256,9 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.t2overt1, study.result_ySC_t2overt1(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.t2overt1, study.result_ySC_t2overt1(i, :), 
+		'Color', plotSettings.lineColor(i), 'LineStyle',plotSettings.lineStyle(floor((i+4)/4)),
+		'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
@@ -273,7 +284,9 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.t2overt1, study.Phi_y(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.t2overt1, study.Phi_y(i, :), 
+		'Color', plotSettings.lineColor(i), 'LineStyle',plotSettings.lineStyle(floor((i+4)/4)),
+		'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
