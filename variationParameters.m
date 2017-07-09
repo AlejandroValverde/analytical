@@ -22,7 +22,7 @@ loadCase.posForceAdim = 0.5;
 plotSettings.plotAnalytical = false;
 plotSettings.savePlot = true;
 
-plotSettings.lineStyle = ['k-', 'c-', 'r-', 'y-', 'k--', 'c--', 'r--', 'y--', 'k:', 'c:', 'r:', 'y:','k-.', 'c-.', 'r-.', 'y-.']
+plotSettings.lineStyle = {'k-', 'c-', 'r-', 'y-', 'k--', 'c--', 'r--', 'y--', 'k:', 'c:', 'r:', 'y:','k-.', 'c-.', 'r-.', 'y-.'};
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
 plotSettings.LineWidth = 1.5; %Line width, specified as a positive value in points.
 plotSettings.axGridAlpha = 0.2; %Grid-line transparency, specified as a value in the range [0,1].
@@ -82,7 +82,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Variation of B/H - Torsional stiffness
-clearvars study, mat, geom
+clearvars study mat geom
 study.BoverH = linspace(0.5, 4, 100);
 study.E1overE2 = [1, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3];
 
@@ -186,7 +186,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Variation of t_2/t_1 - Torsional stiffness
-clearvars study, mat, geom
+clearvars study mat geom
 study.t2overt1 = linspace(0.1, 8, 100);
 study.E1overE2 = [1, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3];
 
@@ -211,7 +211,7 @@ end
 end
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
-set(gcf, 'Name', 'Torsional stiffness variation for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+set(gcf, 'Name', 'Torsional stiffness variation for different thickness ratio t_2/t_1 and stiffness ratio E_1/E_2)')
 ax = gca;
 ylabel('G I_t [N mm^2]')
 xlabel(['B/H'])
@@ -238,7 +238,7 @@ end
 %% Shear center
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
-set(gcf, 'Name', 'Shear center for closed section location for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+set(gcf, 'Name', 'Shear center for closed section location for different thickness ratio t_2/t_1 and stiffness ratio E_1/E_2)')
 ax = gca;
 ylabel('y_{SC} / B')
 xlabel(['B/H'])
@@ -264,7 +264,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
-set(gcf, 'Name', 'Flexural stiffness for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+set(gcf, 'Name', 'Flexural stiffness for different thickness ratio t_2/t_1 and stiffness ratio E_1/E_2)')
 ax = gca;
 ylabel('\phi_y [N mm^2]')
 xlabel(['B/H'])
