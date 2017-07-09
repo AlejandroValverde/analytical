@@ -75,7 +75,7 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'twist_E1overE2.png'])
+    saveas(gcf, [dirWork.figures 'twist-E1overE2.png'])
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,7 +127,7 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'GIt_E1overE2_BoverH.png'])
+    saveas(gcf, [dirWork.figures 'GIt-E1overE2-BoverH.png'])
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -154,7 +154,7 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'SC_E1overE2_BoverH.png'])
+    saveas(gcf, [dirWork.figures 'SC-E1overE2-BoverH.png'])
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -180,5 +180,5 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'EIy_E1overE2_BoverH.png'])
+    saveas(gcf, [dirWork.figures 'EIy-E1overE2-BoverH.png'])
 end

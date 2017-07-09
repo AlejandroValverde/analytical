@@ -301,7 +301,7 @@ legend(ax, [y1 y2 y4 y3], 'FEM-U2','FEM-UR3_{up}', 'FEM-UR3_{mean}', 'Analytical
 FsClass.SetAxisProp(ax, plotSettings);
 
 if plotSettings.savePlot
-    saveas(gcf, ['twist_E1OverE2.png'])
+    saveas(gcf, ['twist-E1OverE2.png'])
 end
 
 for j=1:length(operCell)
