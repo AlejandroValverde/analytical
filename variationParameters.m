@@ -22,6 +22,7 @@ loadCase.posForceAdim = 0.5;
 plotSettings.plotAnalytical = false;
 plotSettings.savePlot = true;
 
+plotSettings.lineStyle = ['k-', 'c-', 'r-', 'y-', 'k--', 'c--', 'r--', 'y--', 'k:', 'c:', 'r:', 'y:','k-.', 'c-.', 'r-.', 'y-.']
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
 plotSettings.LineWidth = 1.5; %Line width, specified as a positive value in points.
 plotSettings.axGridAlpha = 0.2; %Grid-line transparency, specified as a value in the range [0,1].
@@ -79,15 +80,14 @@ if plotSettings.savePlot
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Variation of B/H - Torsional stiffness
-clearvars study
+clearvars study, mat, geom
 study.BoverH = linspace(0.5, 4, 100);
-study.E1overE2 = [1, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3, 10^3.5];
-mat_init = mat;
-geom_init = geom;
+study.E1overE2 = [1, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3];
 
 study.result_GIt_BoverH = zeros(length(study.E1overE2), length(study.BoverH));
-study.result_ySCoverB_BoverH = zeros(length(study.E1overE2), length(study.BoverH));
+study.result_ySC_BoverH = zeros(length(study.E1overE2), length(study.BoverH));
 study.Phi_y = zeros(length(study.E1overE2), length(study.BoverH));
 
 %Update variable
@@ -101,7 +101,7 @@ geom.B = (study.BoverH(j_study) * 120) / (study.BoverH(j_study) + 1);
 geom.H = 120 - geom.B;
 mainBeam %Execute analytical model script
 study.result_GIt_BoverH(i_study, j_study) = oper.torStiff;
-study.result_ySCoverB_BoverH(i_study, j_study) = -oper.y_sc_closed / geom.B;
+study.result_ySC_BoverH(i_study, j_study) = -oper.y_sc_closed / geom.B;
 study.Phi_y(i_study, j_study) = oper.Phi_y;
 end
 end
@@ -116,7 +116,7 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.BoverH, study.result_GIt_BoverH(i, :), 'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.BoverH, study.result_GIt_BoverH(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
@@ -143,7 +143,7 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.BoverH, study.result_ySCoverB_BoverH(i, :), 'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.BoverH, study.result_ySC_BoverH(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
@@ -169,7 +169,7 @@ hold on
 y_plots = zeros(1, length(study.E1overE2));
 legendStr = cell(1, length(study.E1overE2));
 for i= 1:length(study.E1overE2)
-	y_plots(i) = plot(ax, study.BoverH, study.Phi_y(i, :), 'LineWidth', plotSettings.LineWidth);
+	y_plots(i) = plot(ax, study.BoverH, study.Phi_y(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
 	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
 end
 
@@ -181,4 +181,108 @@ FsClass.SetAxisProp(ax, plotSettings);
 %Save figure
 if plotSettings.savePlot
     saveas(gcf, [dirWork.figures 'EIy-E1overE2-BoverH.png'])
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Variation of t_2/t_1 - Torsional stiffness
+clearvars study, mat, geom
+study.t2overt1 = linspace(0.1, 8, 100);
+study.E1overE2 = [1, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3];
+
+study.result_GIt_t2overt1 = zeros(length(study.E1overE2), length(study.t2overt1));
+study.result_ySC_t2overt1 = zeros(length(study.E1overE2), length(study.t2overt1));
+study.Phi_y = zeros(length(study.E1overE2), length(study.t2overt1));
+
+%Update variable
+mat = mat_init;
+geom = geom_init;
+for i_study= 1:length(study.E1overE2)
+for j_study= 1:length(study.t2overt1)
+mat.E2 = mat.E1 / study.E1overE2(i_study);
+mat.G2 = mat.E2 / (2*(0.3269 + 1) ); %N/mm2,
+geom.t2 = (study.t2overt1(j_study) * 1) / (study.t2overt1(j_study) + 1);
+geom.t1 = 1 - geom.t2;
+mainBeam %Execute analytical model script
+study.result_GIt_t2overt1(i_study, j_study) = oper.torStiff;
+study.result_ySC_t2overt1(i_study, j_study) = -oper.y_sc_closed / geom.B;
+study.Phi_y(i_study, j_study) = oper.Phi_y;
+end
+end
+
+figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+set(gcf, 'Name', 'Torsional stiffness variation for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+ax = gca;
+ylabel('G I_t [N mm^2]')
+xlabel(['B/H'])
+hold on
+
+y_plots = zeros(1, length(study.E1overE2));
+legendStr = cell(1, length(study.E1overE2));
+for i= 1:length(study.E1overE2)
+	y_plots(i) = plot(ax, study.t2overt1, study.result_GIt_t2overt1(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
+end
+
+
+legend(ax, y_plots, legendStr, 'location','Best')
+
+FsClass.SetAxisProp(ax, plotSettings);
+
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'GIt-E1overE2-t2overt1.png'])
+end
+
+%%%%%%%%%%%%%%%%%%%%%
+%% Shear center
+
+figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+set(gcf, 'Name', 'Shear center for closed section location for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+ax = gca;
+ylabel('y_{SC} / B')
+xlabel(['B/H'])
+hold on
+
+y_plots = zeros(1, length(study.E1overE2));
+legendStr = cell(1, length(study.E1overE2));
+for i= 1:length(study.E1overE2)
+	y_plots(i) = plot(ax, study.t2overt1, study.result_ySC_t2overt1(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
+end
+
+
+legend(ax, y_plots, legendStr, 'location','Best')
+
+FsClass.SetAxisProp(ax, plotSettings);
+
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'SC-E1overE2-t2overt1.png'])
+end
+
+%%%%%%%%%%%%%%%%%%%%%
+
+figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+set(gcf, 'Name', 'Flexural stiffness for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2)')
+ax = gca;
+ylabel('\phi_y [N mm^2]')
+xlabel(['B/H'])
+hold on
+
+y_plots = zeros(1, length(study.E1overE2));
+legendStr = cell(1, length(study.E1overE2));
+for i= 1:length(study.E1overE2)
+	y_plots(i) = plot(ax, study.t2overt1, study.Phi_y(i, :), plotSettings.lineStyle(i),'LineWidth', plotSettings.LineWidth);
+	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
+end
+
+
+legend(ax, y_plots, legendStr, 'location','Best')
+
+FsClass.SetAxisProp(ax, plotSettings);
+
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'EIy-E1overE2-t2overt1.png'])
 end
