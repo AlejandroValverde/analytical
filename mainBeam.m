@@ -18,6 +18,9 @@ y_load = loadCase.posForceAdim*geom.B; %mm
 loadCase.q_z = q_z;
 loadCase.y_load = y_load;
 
+% Save load to oper
+oper.Q_z_total = loadCase.Q_z_total;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Operations
 t1 = geom.t1;
@@ -262,7 +265,7 @@ twist_fun = @(x) specific_twist_fun(x) .* x;
 % twist_concentratedLoad = ((-150000) ./ oper.torStiff) .* geom.L;
 
 twist_concentratedLoad = ((loadCase.Q_z_total .* (y_load - oper.y_sc_closed)) ./ oper.torStiff) .* xAdimSec .* geom.L;
-w_b = w_b_fun(xAdimSec .* geom.L);
+oper.w_b = w_b_fun(xAdimSec .* geom.L);
 
 if plotSettings.plotAnalytical && plotSettings.plotDistributedLoad
     plot(ax_distributed, xAdimSec .* geom.L, twist_fun(xAdimSec .* geom.L) .* (180/pi))

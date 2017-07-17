@@ -206,7 +206,7 @@ if plotSettings.plotTwistAlongZ
 	end
 
 	if plotSettings.plotBending
-		y2_bend = plot(ax_bending, xAdimSec, -w_b, 'b'); %Need to change sign because different axis
+		y2_bend = plot(ax_bending, xAdimSec, -oper.w_b, 'b'); %Need to change sign because different axis
 
 		legend(ax_bending, [y1_bend y2_bend], 'FEM-U2', 'Analytical', 'location','Best')
 	end
