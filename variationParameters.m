@@ -17,7 +17,7 @@ mat.G2 = mat.E2 / ( 2*(0.3269 + 1) ); %N/mm2, steel: 79.3 GPa
 
 loadCase.Q_z_total = 2000; %N
 
-loadCase.posForceAdim = 0.5;
+loadCase.posForceAdim = 0.0;
 
 plotSettings.plotAnalytical = false;
 plotSettings.savePlot = true;
@@ -44,10 +44,10 @@ geom_init = geom;
 % study.E1overE2 = logspace(0,5,100);
 study.n_E1overE2 = 300;
 study.step_E1overE2 = 1.025;
-study.E1overE2 = 1; %Initial value
+study.E1overE2 = 1.1; %Initial value
 study.twistTip = zeros(1, study.n_E1overE2);
 study.storage_E1overE2 = zeros(1, study.n_E1overE2);
-study.w_b_tip = zeros(1, study.n_E1overE2);
+study.Q_z_total = zeros(1, study.n_E1overE2);
 operCell = cell(1, study.n_E1overE2);
 
 %Update variable
@@ -61,6 +61,8 @@ for i_study= 1:study.n_E1overE2
 	mainBeam %Execute analytical model script
 	
 	study.twistTip(i_study) = twist_concentratedLoad(end) .* (180/pi);
+
+	study.Q_z_total = oper.Q_z_total;
 	
 	operCell{i_study} = oper;
 	
@@ -68,14 +70,15 @@ for i_study= 1:study.n_E1overE2
 end
 
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
-set(gcf, 'Name', 'Twist at tip as a function of stiffness ratio E_1/E_2')
+set(gcf, 'Name', 'Torsional compliance a function of stiffness ratio E_1/E_2')
 ax = gca;
-loglog(ax, study.storage_E1overE2, study.twistTip, 'LineWidth', plotSettings.LineWidth);
+loglog(ax, study.storage_E1overE2, abs(study.twistTip) ./ study.Q_z_total, 'LineWidth', plotSettings.LineWidth);
+% plot(ax, study.storage_E1overE2, study.twistTip , 'LineWidth', plotSettings.LineWidth);
 % set(ax, 'YScale', 'log')
 % set(ax, 'XScale', 'log')
 % set(ax, 'YLabel', '\phi_{tip} [deg]')
 % set(ax, 'XLabel', 'E_1/E_2')
-ylabel('\phi_{tip} [deg]')
+ylabel('\phi_{tip}/Q [deg/N]')
 xlabel(['E_1/E_2'])
 
 FsClass.SetAxisProp(ax, plotSettings);
@@ -237,7 +240,7 @@ end
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Torsional compliance for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2')
 ax = gca;
-ylabel('|\phi_{tip}|/Q [rad/N]')
+ylabel('|\phi_{tip}|/Q [deg/N]')
 xlabel(['B/H'])
 hold on
 
@@ -274,7 +277,7 @@ end
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Flexural compliance for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2')
 ax = gca;
-ylabel('|w_{0,tip}|/Q [mm/N]')
+ylabel('w_{0,tip}/Q [mm/N]')
 xlabel(['B/H'])
 hold on
 
@@ -311,7 +314,7 @@ end
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Ratio of flexural and torsional compliance for different cross sectional aspect ratio B/H and stiffness ratio E_1/E_2')
 ax = gca;
-ylabel('|\phi_{tip}|/w_{0,tip} [rad/mm]')
+ylabel('|\phi_{tip}|/w_{0,tip} [deg/mm]')
 xlabel(['B/H'])
 hold on
 
@@ -494,7 +497,7 @@ end
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Torsional compliance for different thickness ratio t_2/t_1 and stiffness ratio E_1/E_2')
 ax = gca;
-ylabel('|\phi_{tip}|/Q [rad/N]')
+ylabel('|\phi_{tip}|/Q [deg/N]')
 xlabel(['t_2/t_1'])
 hold on
 
@@ -531,7 +534,7 @@ end
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Flexural compliance for different thickness ratio t_2/t_1 and stiffness ratio E_1/E_2')
 ax = gca;
-ylabel('|w_{0,tip}|/Q [mm/N]')
+ylabel('w_{0,tip}/Q [mm/N]')
 xlabel(['t_2/t_1'])
 hold on
 
@@ -568,7 +571,7 @@ end
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Ratio of flexural and torsional compliance for different thickness ratio t_2/t_1 and stiffness ratio E_1/E_2')
 ax = gca;
-ylabel('|\phi_{tip}|/w_{0,tip} [rad/mm]')
+ylabel('|\phi_{tip}|/w_{0,tip} [deg/mm]')
 xlabel(['t_2/t_1'])
 hold on
 
@@ -597,4 +600,112 @@ FsClass.SetAxisProp(ax, plotSettings);
 %Save figure
 if plotSettings.savePlot
     saveas(gcf, [dirWork.figures 'phioverw-E1overE2-t2overt1.png'])
+end
+
+%% Variation of LoverB - slenderness ratio
+clearvars study mat geom
+study.LoverB = linspace(5, 40, 100);
+study.E1overE2 = [1, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3];
+
+study.result_GIt_LoverB = zeros(length(study.E1overE2), length(study.LoverB));
+study.result_ySC_LoverB = zeros(length(study.E1overE2), length(study.LoverB));
+study.result_Phi_y = zeros(length(study.E1overE2), length(study.LoverB));
+study.result_twistTip_LoverB = zeros(length(study.E1overE2), length(study.LoverB));
+study.result_wbtip_LoverB = zeros(length(study.E1overE2), length(study.LoverB));
+study.result_Q_z_total = zeros(length(study.E1overE2), length(study.LoverB));
+
+%Update variable
+mat = mat_init;
+geom = geom_init;
+for i_study= 1:length(study.E1overE2)
+for j_study= 1:length(study.LoverB)
+mat.E2 = mat.E1 / study.E1overE2(i_study);
+mat.G2 = mat.E2 / (2*(0.3269 + 1) ); %N/mm2,
+cte = 2*geom.L*geom.t1*(geom.B + geom.H);
+geom.L = (-geom.H + sqrt(geom.H^2 + (4*cte/(2*geom.t1*study.LoverB(j_study))) ))/(2/study.LoverB(j_study));
+geom.B = geom.L / study.LoverB(j_study);
+
+mainBeam %Execute analytical model script
+
+study.result_GIt_LoverB(i_study, j_study) = oper.torStiff;
+study.result_ySC_LoverB(i_study, j_study) = -oper.y_sc_closed / geom.B;
+study.result_Phi_y(i_study, j_study) = oper.Phi_y;
+study.result_twistTip_LoverB(i_study, j_study) = twist_concentratedLoad(end) .* (180/pi);
+study.result_wbtip_LoverB(i_study, j_study) = oper.w_b(end);
+study.result_Q_z_total(i_study, j_study) = oper.Q_z_total;
+end
+end
+
+%%%%%%%%%%%%%%%%%%%%%
+%% Torsional compliance
+
+figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+set(gcf, 'Name', 'Torsional compliance for different slenderness ratio L/B and stiffness ratio E_1/E_2')
+ax = gca;
+ylabel('|\phi_{tip}|/Q [deg/N]')
+xlabel(['L/B'])
+hold on
+
+y_plots = zeros(1, length(study.E1overE2));
+legendStr = cell(1, length(study.E1overE2));
+i_plot = 1;
+j_plot = 1;
+for i= 1:length(study.E1overE2)
+	y_plots(i) = plot(ax, study.LoverB, abs(study.result_twistTip_LoverB(i, :)) ./ study.result_Q_z_total(i, :), ...
+		'Color', plotSettings.lineColor{i_plot}, 'LineStyle',plotSettings.lineStyle{j_plot}, ...
+		'LineWidth', plotSettings.LineWidth); 
+	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
+	if i_plot == 4
+	    i_plot = 1;
+	    j_plot = j_plot + 1;
+	else
+	    i_plot = i_plot + 1;
+	end
+end
+
+
+legend(ax, y_plots, legendStr, 'location','Best')
+
+FsClass.SetAxisProp(ax, plotSettings);
+
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'phioverQ-E1overE2-LoverB.png'])
+end
+
+%%%%%%%%%%%%%%%%%%%%%
+%% Flexural compliance
+
+figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
+set(gcf, 'Name', 'Flexural compliance for different slenderness ratio L/B and stiffness ratio E_1/E_2')
+ax = gca;
+ylabel('w_{0,tip}/Q [mm/N]')
+xlabel(['L/B'])
+hold on
+
+y_plots = zeros(1, length(study.E1overE2));
+legendStr = cell(1, length(study.E1overE2));
+i_plot = 1;
+j_plot = 1;
+for i= 1:length(study.E1overE2)
+	y_plots(i) = plot(ax, study.LoverB, abs(study.result_wbtip_LoverB(i, :)) ./ study.result_Q_z_total(i, :), ...
+		'Color', plotSettings.lineColor{i_plot}, 'LineStyle',plotSettings.lineStyle{j_plot}, ...
+		'LineWidth', plotSettings.LineWidth); 
+	legendStr{i} = ['E1/E2=10^{' num2str(round(log10(study.E1overE2(i)), 2)) '}'];
+	if i_plot == 4
+	    i_plot = 1;
+	    j_plot = j_plot + 1;
+	else
+	    i_plot = i_plot + 1;
+	end
+end
+
+
+legend(ax, y_plots, legendStr, 'location','Best')
+
+FsClass.SetAxisProp(ax, plotSettings);
+
+%Save figure
+if plotSettings.savePlot
+    saveas(gcf, [dirWork.figures 'woverQ-E1overE2-LoverB.png'])
 end
