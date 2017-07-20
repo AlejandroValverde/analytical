@@ -2,7 +2,7 @@
 clear all
 
 %% Parameters
-geom.L = 200; %mm
+geom.L = 800; %mm
 geom.B = 80; %mm
 geom.H = 40; %mm
 geom.t1 = 1;
@@ -20,7 +20,7 @@ loadCase.Q_z_total = 2000; %N
 loadCase.posForceAdim = 0.0;
 
 plotSettings.plotAnalytical = false;
-plotSettings.savePlot = true;
+plotSettings.savePlot = false;
 
 plotSettings.lineStyle = {'-', '--', ':', '-.'};
 plotSettings.lineColor = {'k', 'b', 'r', 'y'};

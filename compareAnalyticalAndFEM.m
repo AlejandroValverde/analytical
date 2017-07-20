@@ -4,7 +4,7 @@ clear all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Parameters
-geom.L = 200; %mm
+geom.L = 800; %mm
 geom.B = 80; %mm
 geom.H = 40; %mm
 geom.t1 = 1;
@@ -32,9 +32,9 @@ loadCase.posForceAdim = 0.0;
 %% Plotting settings
 plotSettings.plotAnalytical = false;
 plotSettings.plotDistributedLoad = false;
-plotSettings.plotBending = true;
-plotSettings.plotTwistAlongZ = true;
-plotSettings.plotParametricStudy = false;
+plotSettings.plotBending = false;
+plotSettings.plotTwistAlongZ = false;
+plotSettings.plotParametricStudy = true;
 plotSettings.shearCenterPos = false;
 options.executeAbaqus = true;
 
@@ -222,7 +222,7 @@ if plotSettings.plotParametricStudy
 %Study for range of E2
 % Parameter for abaqus: E1overE2
 % Values
-study.E1overE2 = linspace(1, 20, 10);
+study.E1overE2 = linspace(1, 30, 5);
 % study.E1overE2 = logspace(0,5,5);
 % study.E1overE2 = [1, 20, 10];
 
