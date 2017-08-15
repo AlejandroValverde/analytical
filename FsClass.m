@@ -72,6 +72,8 @@ classdef FsClass
             set(axesHandle, 'FontSize', plotSet.axFontSize);
             set(axesHandle, 'LineWidth', plotSet.axLineWidth);
             set(axesHandle, 'TitleFontSizeMultiplier', plotSet.TitleFontSizeMultiplier);
+            set(axesHandle, 'LabelFontSizeMultiplier', plotSet.LabelFontSizeMultiplier);
+
             grid minor
 
         end

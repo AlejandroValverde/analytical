@@ -20,17 +20,19 @@ loadCase.Q_z_total = 2000; %N
 loadCase.posForceAdim = 0.0;
 
 plotSettings.plotAnalytical = false;
-plotSettings.savePlot = false;
+plotSettings.savePlot = true;
 
 plotSettings.lineStyle = {'-', '--', ':', '-.'};
 plotSettings.lineColor = {'k', 'b', 'r', 'y'};
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
-plotSettings.LineWidth = 1.5; %Line width, specified as a positive value in points.
+plotSettings.LineWidth = 3; %Line width, specified as a positive value in points.
 plotSettings.axGridAlpha = 0.2; %Grid-line transparency, specified as a value in the range [0,1].
-plotSettings.axFontSize = 14; %Font size for axis labels, specified as a scalar numeric value.
+plotSettings.axFontSize = 20; %Font size for axis labels, specified as a scalar numeric value.
 plotSettings.axLineWidth = 1.5; %Width of axes outline, tick marks, and grid lines, specified as a scalar value in point units.
 plotSettings.TitleFontSizeMultiplier = 1.5; %Scale factor for title font size, specified as a numeric value greater than 0.
 %The axes applies this scale factor to the value of the FontSize property to determine the font size for the title.
+plotSettings.LabelFontSizeMultiplier = 1.5; %Scale factor for label font size, specified as a numeric value greater than 0. 
+%The axes applies this scale factor to the value of the FontSize property to determine the font size for the x-axis, y-axis, and z-axis labels.
 
 %% Organize folder
 [dirWork] = FsClass.organizeFolders();
@@ -85,7 +87,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'twist-E1overE2.png'])
+    % saveas(gcf, [dirWork.figures 'twist-E1overE2.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'twist-E1overE2'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,7 +161,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'GIt-E1overE2-BoverH.png'])
+    % saveas(gcf, [dirWork.figures 'GIt-E1overE2-BoverH.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'GIt-E1overE2-BoverH'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -194,7 +200,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'SC-E1overE2-BoverH.png'])
+    % saveas(gcf, [dirWork.figures 'SC-E1overE2-BoverH.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'SC-E1overE2-BoverH'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -231,7 +239,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'EIy-E1overE2-BoverH.png'])
+    % saveas(gcf, [dirWork.figures 'EIy-E1overE2-BoverH.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'EIy-E1overE2-BoverH'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -268,7 +278,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'phioverQ-E1overE2-BoverH.png'])
+    % saveas(gcf, [dirWork.figures 'phioverQ-E1overE2-BoverH.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'phioverQ-E1overE2-BoverH'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -305,7 +317,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'woverQ-E1overE2-BoverH.png'])
+    % saveas(gcf, [dirWork.figures 'woverQ-E1overE2-BoverH.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'woverQ-E1overE2-BoverH'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -342,7 +356,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'phioverw-E1overE2-BoverH.png'])
+    % saveas(gcf, [dirWork.figures 'phioverw-E1overE2-BoverH.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'phioverw-E1overE2-BoverH'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -414,7 +430,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'GIt-E1overE2-t2overt1.png'])
+    % saveas(gcf, [dirWork.figures 'GIt-E1overE2-t2overt1.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'GIt-E1overE2-t2overt1'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -451,7 +469,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'SC-E1overE2-t2overt1.png'])
+    % saveas(gcf, [dirWork.figures 'SC-E1overE2-t2overt1.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'SC-E1overE2-t2overt1'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -488,7 +508,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'EIy-E1overE2-t2overt1.png'])
+    % saveas(gcf, [dirWork.figures 'EIy-E1overE2-t2overt1.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'EIy-E1overE2-t2overt1'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -525,7 +547,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'phioverQ-E1overE2-t2overt1.png'])
+    % saveas(gcf, [dirWork.figures 'phioverQ-E1overE2-t2overt1.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'phioverQ-E1overE2-t2overt1'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -562,7 +586,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'woverQ-E1overE2-t2overt1.png'])
+    % saveas(gcf, [dirWork.figures 'woverQ-E1overE2-t2overt1.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'woverQ-E1overE2-t2overt1'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -599,7 +625,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'phioverw-E1overE2-t2overt1.png'])
+    % saveas(gcf, [dirWork.figures 'phioverw-E1overE2-t2overt1.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'phioverw-E1overE2-t2overt1'],'-dpdf','-r400')
 end
 
 %% Variation of LoverB - slenderness ratio
@@ -670,7 +698,9 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'phioverQ-E1overE2-LoverB.png'])
+    % saveas(gcf, [dirWork.figures 'phioverQ-E1overE2-LoverB.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'phioverQ-E1overE2-LoverB'],'-dpdf','-r400')
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -707,5 +737,7 @@ FsClass.SetAxisProp(ax, plotSettings);
 
 %Save figure
 if plotSettings.savePlot
-    saveas(gcf, [dirWork.figures 'woverQ-E1overE2-LoverB.png'])
+    % saveas(gcf, [dirWork.figures 'woverQ-E1overE2-LoverB.png'])
+    set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
+    print(gcf,[dirWork.figures 'woverQ-E1overE2-LoverB'],'-dpdf','-r400')
 end
