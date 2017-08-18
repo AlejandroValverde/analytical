@@ -48,6 +48,7 @@ study.n_E1overE2 = 300;
 study.step_E1overE2 = 1.025;
 study.E1overE2 = 1.1; %Initial value
 study.twistTip = zeros(1, study.n_E1overE2);
+study.wbTip = zeros(1, study.n_E1overE2);
 study.storage_E1overE2 = zeros(1, study.n_E1overE2);
 study.Q_z_total = zeros(1, study.n_E1overE2);
 operCell = cell(1, study.n_E1overE2);
@@ -64,6 +65,8 @@ for i_study= 1:study.n_E1overE2
 	
 	study.twistTip(i_study) = twist_concentratedLoad(end) .* (180/pi);
 
+	study.wbTip(i_study) = oper.w_b(end);
+
 	study.Q_z_total = oper.Q_z_total;
 	
 	operCell{i_study} = oper;
@@ -74,14 +77,24 @@ end
 figure('Units', 'normalized', 'Position', [0.15 0.1 0.7 0.75])
 set(gcf, 'Name', 'Torsional compliance a function of stiffness ratio E_1/E_2')
 ax = gca;
-loglog(ax, study.storage_E1overE2, abs(study.twistTip) ./ study.Q_z_total, 'LineWidth', plotSettings.LineWidth);
+
+loglog(ax, study.storage_E1overE2, abs(study.twistTip) ./ study.Q_z_total, 'LineWidth', plotSettings.LineWidth, ...
+	'Color', plotSettings.lineColor{1}, 'LineStyle',plotSettings.lineStyle{1});
+ylabel('\phi_{tip}/Q [deg/N]')
+yyaxis right;
+set(ax, 'YScale', 'log')
+loglog(ax, study.storage_E1overE2, abs(study.wbTip) ./ study.Q_z_total, 'LineWidth', plotSettings.LineWidth, ...
+	'Color', plotSettings.lineColor{1}, 'LineStyle',plotSettings.lineStyle{2});
+ylabel('w_{tip}/Q [mm/N]')
+set(ax, 'YColor', 'k');
+set(ax, 'YLim', [0.01, 0.1]);
 % plot(ax, study.storage_E1overE2, study.twistTip , 'LineWidth', plotSettings.LineWidth);
 % set(ax, 'YScale', 'log')
 % set(ax, 'XScale', 'log')
 % set(ax, 'YLabel', '\phi_{tip} [deg]')
 % set(ax, 'XLabel', 'E_1/E_2')
-ylabel('\phi_{tip}/Q [deg/N]')
 xlabel(['E_1/E_2'])
+set(ax, 'XLim', [1, 2*10^3]);
 
 FsClass.SetAxisProp(ax, plotSettings);
 

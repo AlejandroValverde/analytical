@@ -36,7 +36,7 @@ plotSettings.plotBending = false;
 plotSettings.plotTwistAlongZ = false;
 plotSettings.plotParametricStudy = true;
 plotSettings.shearCenterPos = false;
-options.executeAbaqus = true;
+options.executeAbaqus = false;
 
 plotSettings.savePlot = false;
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
