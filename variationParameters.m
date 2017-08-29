@@ -25,9 +25,9 @@ plotSettings.savePlot = true;
 plotSettings.lineStyle = {'-', '--', ':', '-.'};
 plotSettings.lineColor = {'k', 'b', 'r', 'y'};
 plotSettings.MarkerSize = 30; %Marker size for scattered points, specified as a positive value in points.
-plotSettings.LineWidth = 3; %Line width, specified as a positive value in points.
+plotSettings.LineWidth = 4; %Line width, specified as a positive value in points.
 plotSettings.axGridAlpha = 0.2; %Grid-line transparency, specified as a value in the range [0,1].
-plotSettings.axFontSize = 20; %Font size for axis labels, specified as a scalar numeric value.
+plotSettings.axFontSize = 25; %Font size for axis labels, specified as a scalar numeric value.
 plotSettings.axLineWidth = 1.5; %Width of axes outline, tick marks, and grid lines, specified as a scalar value in point units.
 plotSettings.TitleFontSizeMultiplier = 1.5; %Scale factor for title font size, specified as a numeric value greater than 0.
 %The axes applies this scale factor to the value of the FontSize property to determine the font size for the title.
@@ -104,6 +104,8 @@ if plotSettings.savePlot
     set(gcf,'PaperPositionMode','auto','Units','Inches','PaperSize',[15, 10])
     print(gcf,[dirWork.figures 'twist-E1overE2'],'-dpdf','-r400')
 end
+
+legend(ax,'\phi_{tip}/Q', 'w_{tip}/Q' , 'location','Best')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
